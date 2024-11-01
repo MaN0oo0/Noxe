@@ -1,0 +1,20 @@
+@import "../../index.scss";
+.bg_dark {
+  background-color: $lightBgColor !important;
+  color: $fontColor !important;
+}
+.Nav_Icons {
+  display: flex;
+  justify-content: space-evenly;
+  width: 160px;
+  padding: 5px;
+
+  margin: 5px auto;
+}
+.Nav_Icons > i {
+  cursor: pointer;
+}
+.main-title {
+  font-size: 40px;
+  font-family: "Arial Helvetica", sans-serif !important;
+}
