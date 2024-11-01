@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import styles from "./RegisterForm.module.scss";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import Joi, { allow } from "joi";
 
 export default function RegisterForm() {
+  let navigate = useNavigate();
   const [user, setUser] = useState({
     firstName: "",
     lastName: "",
@@ -13,6 +16,7 @@ export default function RegisterForm() {
 
   const [errors, setErrors] = useState({});
   const [responseError, setResError] = useState({});
+  const [joiError, setjoiError] = useState([]);
   const validateField = (name, value) => {
     if (!value) {
       return `${name.replace(/([A-Z])/g, " $1")} is required`;
@@ -22,44 +26,72 @@ export default function RegisterForm() {
     }
     return "";
   };
+  const vaildationFormData = () => {
+    const schema = Joi.object({
+      firstName: Joi.string().min(2).max(12).required(),
+      lastName: Joi.string().min(2).max(12).required(),
+      email: Joi.string()
+        .required()
+        .email({ tlds: { allow: ["com", "net"] } }),
+      password: Joi.string()
+        .min(8)
+        .required()
+        .pattern(new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\W).{6,}$"))
+        .messages({
+          "string.pattern.base":
+            "Password must be at least 8 characters long, include at least one lowercase letter, one uppercase letter, and one special character.",
+          "string.min": "Password must be at least 8 characters long.",
+        }),
+      userName: Joi.string().required(),
+    });
+    return schema.validate(user, { abortEarly: false });
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    console.log(joiError);
+
     setUser((prev) => ({
       ...prev,
       [name]: value,
     }));
-    setErrors((prev) => ({
-      ...prev,
-      [name]: validateField(name, value),
-    }));
+    // setErrors((prev) => ({
+    //   ...prev,
+    //   [name]: validateField(name, value),
+    // }));
+    if (vaildationFormData().error) {
+      setjoiError(vaildationFormData().error.details);
+    }
   };
 
   const submitFormData = async (e) => {
     e.preventDefault();
-    const newErrors = {
-      firstName: validateField("firstName", user.firstName),
-      lastName: validateField("lastName", user.lastName),
-      email: validateField("email", user.email),
-      userName: validateField("userName", user.userName),
-      password: validateField("password", user.password),
-    };
 
-    if (Object.values(newErrors).every((error) => !error)) {
-      try {
-        const response = await axios.post(
-          "https://localhost:7103/api/Auth/Register",
-          user
-        );
-        document.forms[0].reset();
-        // Optionally reset the form or redirect the user
-      } catch (error) {
-        console.error("Registration failed:", error);
-        setResError(error.response);
-      }
-    } else {
-      setErrors(newErrors);
+    if (vaildationFormData().error) {
+      setjoiError(vaildationFormData().error.details);
     }
+    // const newErrors = {
+    //   firstName: validateField("firstName", user.firstName),
+    //   lastName: validateField("lastName", user.lastName),
+    //   email: validateField("email", user.email),
+    //   userName: validateField("userName", user.userName),
+    //   password: validateField("password", user.password),
+    // };
+
+    // if (Object.values(newErrors).every((error) => !error)) {
+    //   try {
+    //     const response = await axios.post(
+    //       "https://localhost:7103/api/Auth/Register",
+    //       user
+    //     );
+    //     navigate("/login");
+    //   } catch (error) {
+    //     console.error("Registration failed:", error);
+    //     setResError(error.response);
+    //   }
+    // } else {
+    //   setErrors(newErrors);
+    // }
   };
 
   return (
@@ -67,13 +99,28 @@ export default function RegisterForm() {
       <h2>Registration Form</h2>
       <ul>
         {responseError &&
-          responseError.data.trim().split(".").map((e) => {
+          responseError.data &&
+          responseError.data
+            .trim()
+            .split(".")
+            .map((e, i) => {
+              return (
+                e !== "" && (
+                  <li className="text-danger" key={i}>
+                    {e}
+                  </li>
+                )
+              );
+            })}
+      </ul>
+      <ul>
+        {joiError.length > 0 &&
+          joiError &&
+          joiError.map((e, i) => {
             return (
-              e !== "" && (
-                <li className="text-danger" key={e}>
-                  {e}
-                </li>
-              )
+              <li className="text-danger" key={i}>
+                {e.message}
+              </li>
             );
           })}
       </ul>
