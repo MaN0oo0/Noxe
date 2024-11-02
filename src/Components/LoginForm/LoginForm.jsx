@@ -62,7 +62,7 @@ export default function LoginForm(props) {
           props.saveUserData();
           // setIsLogin(true);
 
-          navigate("/");
+           navigate("/");
         }
 
         setResError({});
@@ -103,14 +103,18 @@ export default function LoginForm(props) {
               {errors && <p className="text-danger">{errors[field]}</p>}
             </div>
           ))}
-          <div className="w-100 d-flex justify-content-end">
-            <button className="btn btn-info">Login</button>
-          </div>
+       
+          <div className="d-flex justify-content-center">
           <div className="w-100 d-flex justify-content-start">
             <Link to={"/register"} className="text-decoration-none">
               dont have account ? register
             </Link>
           </div>
+          <div className="w-100 d-flex justify-content-end">
+            <button className="btn btn-info">Login</button>
+          </div>
+          </div>
+       
         </form>
       </div>
     </>

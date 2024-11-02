@@ -3,7 +3,7 @@ import Masterlayout from "../../AssetsComponents/Masterlayout/Masterlayout";
 import {
   createBrowserRouter,
   RouterProvider,
-  BrowserRouter,
+  Navigate,
 } from "react-router-dom";
 import Home from "../Home/Home";
 import About from "../About/About";
@@ -17,6 +17,7 @@ import Tvshows from "../Tvshows/Tvshows";
 import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
 import Profile from "../Profile/Profile";
+import ProtectRoute from "../ProtectRoute/ProtectRoute";
 
 function App() {
   const [userData, setUserData] = useState(null);
@@ -29,11 +30,14 @@ function App() {
       if (checkToken(decodedToken.exp)) {
         setUserData(decodedToken);
         setIsLogin(true);
-        // Route("/") // Note: `navigate` should be defined within the context of a component
+        return <Navigate to="" replace={true} />;
       } else {
         setIsLogin(false);
         localStorage.removeItem("token");
+        return <Navigate to="/login" replace={true} />
       }
+    }else{
+      return <Navigate to="/login" replace={true} />
     }
   };
 
@@ -47,8 +51,9 @@ function App() {
   const logOut = () => {
     localStorage.removeItem("token");
     setIsLogin(false);
+    
   };
-
+//save data while refreshing :)
   useEffect(() => {
     if (localStorage.getItem("token")) {
       saveUserData();
@@ -64,11 +69,46 @@ function App() {
       children: [
         { index: true, element: <Home /> },
         { path: "about", element: <About /> },
-        { path: "movies", element: <Movies /> },
-        { path: "people", element: <People /> },
-        { path: "network", element: <Network /> },
-        { path: "tvshows", element: <Tvshows /> },
-        { path: "profile", element: <Profile userData={userData} /> },
+        {
+          path: "movies",
+          element: (
+            <ProtectRoute isLogin={isLogin}>
+              <Movies />
+            </ProtectRoute>
+          ),
+        },
+        {
+          path: "people",
+          element: (
+            <ProtectRoute isLogin={isLogin}>
+              <People />
+            </ProtectRoute>
+          ),
+        },
+        {
+          path: "network",
+          element: (
+            <ProtectRoute isLogin={isLogin}>
+              <Network />
+            </ProtectRoute>
+          ),
+        },
+        {
+          path: "tvshows",
+          element: (
+            <ProtectRoute isLogin={isLogin}>
+              <Tvshows />{" "}
+            </ProtectRoute>
+          ),
+        },
+        {
+          path: "profile",
+          element: (
+            <ProtectRoute isLogin={isLogin}>
+              <Profile userData={userData} />
+            </ProtectRoute>
+          ),
+        },
         { path: "login", element: <LoginForm saveUserData={saveUserData} /> },
         { path: "register", element: <RegisterForm /> },
       ],

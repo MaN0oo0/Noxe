@@ -1,12 +1,11 @@
 import { Link } from "react-router-dom";
 import styles from "./Navbar.module.scss";
-import { useState } from "react";
+
 export default function Navbar(props) {
+
   const onLogOut = () => {
     props.logOut();
   };
-  const [isLogin, setIsLogin] = useState(props.IsLogin);
-
   return (
     <>
       <nav className={`navbar navbar-expand-lg ${styles.bg_dark}`}>
@@ -118,15 +117,13 @@ export default function Navbar(props) {
                         // onClick={onLogOut}
                         to={"profile"}
                       >
-                        Profile
+                        {props.userdata
+                          ? "Hello " + props.userdata.sub
+                          : "Profile"}
                       </Link>
                     </li>
                     <li className="nav-item">
-                      <Link
-                        className="nav-link "
-                        onClick={onLogOut}
-                        to={"login"}
-                      >
+                      <Link className="nav-link " to={'login'} onClick={onLogOut}>
                         Logout
                       </Link>
                     </li>

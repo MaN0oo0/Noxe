@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styles from "./RegisterForm.module.scss";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Joi from "joi";
 
 export default function RegisterForm() {
@@ -38,9 +38,7 @@ export default function RegisterForm() {
       email: Joi.string()
         .required()
         .email({ tlds: { allow: ["com", "net"] } }),
-      password: Joi.string()
-        .required()
-
+      password: Joi.string().required(),
     });
     return schema.validate(user, { abortEarly: false });
   };
@@ -85,7 +83,7 @@ export default function RegisterForm() {
     const { error } = vaildationFormData();
     // new version of submit v 1.1
     if (error) {
-       console.log(error);
+      console.log(error);
       setjoiError(error.details.map((item) => item.message));
     } else {
       try {
@@ -180,8 +178,16 @@ export default function RegisterForm() {
             </div>
           )
         )}
-        <div className="w-100 d-flex justify-content-end">
-          <button className="btn btn-info">Register</button>
+        <div className="d-flex justify-content-center">
+        
+          <div className="w-100 d-flex justify-content-start">
+            <Link to={"/login"} className="text-decoration-none">
+              Have A Account ? login 😉
+            </Link>
+          </div>
+          <div className="w-100 d-flex justify-content-end">
+            <button className="btn btn-info">Register</button>
+          </div>
         </div>
       </form>
     </div>
