@@ -3,10 +3,10 @@ import Navbar from "../Navbar/Navbar";
 import Footer from "../Footer/Footer";
 import { Outlet } from "react-router-dom";
 
-export default function Masterlayout() {
+export default function Masterlayout(props) {
   return (
     <>
-      <Navbar />
+      <Navbar IsLogin={props.IsLogin} logOut={props.logOut}/>
       <div className="container-md my-3">
         <Outlet></Outlet>
       </div>

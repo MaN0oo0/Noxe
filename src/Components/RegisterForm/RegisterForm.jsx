@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import styles from "./RegisterForm.module.scss";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import Joi, { allow } from "joi";
+import Joi from "joi";
 
 export default function RegisterForm() {
   let navigate = useNavigate();
@@ -17,59 +17,92 @@ export default function RegisterForm() {
   const [errors, setErrors] = useState({});
   const [responseError, setResError] = useState({});
   const [joiError, setjoiError] = useState([]);
-  const validateField = (name, value) => {
-    if (!value) {
-      return `${name.replace(/([A-Z])/g, " $1")} is required`;
-    }
-    if (name === "email" && !/\S+@\S+\.\S+/.test(value)) {
-      return "Email is invalid";
-    }
-    return "";
-  };
+  // old version of validateField v 1.0
+  // const validateField = (name, value) => {
+  //   if (!value) {
+  //     return `${name.replace(/([A-Z])/g, " $1")} is required`;
+  //   }
+  //   if (name === "email" && !/\S+@\S+\.\S+/.test(value)) {
+  //     return "Email is invalid";
+  //   }
+  //   return "";
+  // };
+  // new version of vaildationFormData v 1.1
   const vaildationFormData = () => {
+    //password ==> (?=.*[a-z])(?=.*[A-Z])(?=.*\\W).{6,}
+    ///^(?=.*[a-z])(?=.*[A-Z])(?=.*\\W).{6,}$/
     const schema = Joi.object({
-      firstName: Joi.string().min(2).max(12).required(),
-      lastName: Joi.string().min(2).max(12).required(),
+      firstName: Joi.string().alphanum().required().min(2).max(12),
+      lastName: Joi.string().alphanum().required().min(2).max(12),
+      userName: Joi.string().alphanum().required().min(2).max(12),
       email: Joi.string()
         .required()
         .email({ tlds: { allow: ["com", "net"] } }),
       password: Joi.string()
-        .min(8)
         .required()
-        .pattern(new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\W).{6,}$"))
-        .messages({
-          "string.pattern.base":
-            "Password must be at least 8 characters long, include at least one lowercase letter, one uppercase letter, and one special character.",
-          "string.min": "Password must be at least 8 characters long.",
-        }),
-      userName: Joi.string().required(),
+
     });
     return schema.validate(user, { abortEarly: false });
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    console.log(joiError);
 
+    // Update user state
     setUser((prev) => ({
       ...prev,
       [name]: value,
     }));
+
+    // // Call your validation function
+    // ValidtionOnChange();
+
+    // const { name, value } = e.target;
+    // console.log(name, value);
+
+    // let MyUser = { ...user };
+    // MyUser[name] = value;
+    // setUser(MyUser);
+    // console.log(user);
+
+    // setUser((prev) => ({
+    //   ...prev,
+    //   [name]: value,
+    // }));
+    // old version of set error v 1.0
     // setErrors((prev) => ({
     //   ...prev,
     //   [name]: validateField(name, value),
     // }));
-    if (vaildationFormData().error) {
-      setjoiError(vaildationFormData().error.details);
-    }
+
+    // new version of set error v 1.1
+    // ValidtionOnChange();
+    // console.log(joiError);
   };
 
   const submitFormData = async (e) => {
     e.preventDefault();
+    const { error } = vaildationFormData();
+    // new version of submit v 1.1
+    if (error) {
+       console.log(error);
+      setjoiError(error.details.map((item) => item.message));
+    } else {
+      try {
+        const { response } = await axios.post(
+          "https://localhost:7103/api/Auth/Register",
+          user
+        );
+        console.log(response);
 
-    if (vaildationFormData().error) {
-      setjoiError(vaildationFormData().error.details);
+        navigate("/login");
+      } catch (error) {
+        console.error("Registration failed:", error);
+        setResError(error.response);
+      }
     }
+
+    // old version of submit v 1.0
     // const newErrors = {
     //   firstName: validateField("firstName", user.firstName),
     //   lastName: validateField("lastName", user.lastName),
@@ -119,7 +152,7 @@ export default function RegisterForm() {
           joiError.map((e, i) => {
             return (
               <li className="text-danger" key={i}>
-                {e.message}
+                {e}
               </li>
             );
           })}
