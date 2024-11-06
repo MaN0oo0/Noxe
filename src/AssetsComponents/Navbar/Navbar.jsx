@@ -28,13 +28,14 @@ export default function Navbar(props) {
           </button>
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-              <li className="nav-item">
+             
+              {props.IsLogin && (
+                <>
+                 <li className="nav-item">
                 <Link className="nav-link " to={""}>
                   Home
                 </Link>
               </li>
-              {props.IsLogin && (
-                <>
                   <li className="nav-item">
                     <Link className="nav-link" to={`movies`}>
                       Movies
@@ -50,13 +51,14 @@ export default function Navbar(props) {
                       People
                     </Link>
                   </li>
-                </>
-              )}
-              <li className="nav-item">
+                  <li className="nav-item">
                 <Link className="nav-link" to={`about`}>
                   About
                 </Link>
               </li>
+                </>
+              )}
+  
 
               {props.IsLogin && (
                 <>

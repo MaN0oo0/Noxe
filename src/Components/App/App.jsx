@@ -4,6 +4,8 @@ import {
   createBrowserRouter,
   RouterProvider,
   Navigate,
+  useLocation,
+  useNavigate,
 } from "react-router-dom";
 import Home from "../Home/Home";
 import About from "../About/About";
@@ -15,50 +17,45 @@ import LoginForm from "../LoginForm/LoginForm";
 import RegisterForm from "../RegisterForm/RegisterForm";
 import Tvshows from "../Tvshows/Tvshows";
 import { jwtDecode } from "jwt-decode";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Profile from "../Profile/Profile";
 import ProtectRoute from "../ProtectRoute/ProtectRoute";
 
-function App() {
+const App = () => {
   const [userData, setUserData] = useState(null);
   const [isLogin, setIsLogin] = useState(false);
 
-  const saveUserData = () => {
-    if (IsLogin()) {
-      let encodedToken = localStorage.getItem("token");
-      let decodedToken = jwtDecode(encodedToken);
-      if (checkToken(decodedToken.exp)) {
-        setUserData(decodedToken);
-        setIsLogin(true);
-        return <Navigate to="" replace={true} />;
-      } else {
-        setIsLogin(false);
-        localStorage.removeItem("token");
-        return <Navigate to="/login" replace={true} />
-      }
-    }else{
-      return <Navigate to="/login" replace={true} />
-    }
-  };
+  const saveUserData = useCallback(() => {
+    return IsLogin(); // Call your login check function
+  }, []);
 
   const checkToken = (exp) => {
     return Date.now() < exp * 1000;
   };
 
   const IsLogin = () => {
-    return !!localStorage.getItem("token");
+    if (localStorage.getItem("token")) {
+      let decodedToken = jwtDecode(localStorage.getItem("token"));
+      setUserData(decodedToken);
+      if (checkToken(decodedToken.exp)) {
+        setIsLogin(true);
+      } else {
+        localStorage.removeItem("token");
+        setIsLogin(false);
+      }
+    }
   };
   const logOut = () => {
     localStorage.removeItem("token");
+    setUserData(null);
     setIsLogin(false);
-    
   };
-//save data while refreshing :)
+  //save data while refreshing :)
   useEffect(() => {
     if (localStorage.getItem("token")) {
       saveUserData();
     }
-  }, []);
+  }, [saveUserData]);
 
   const routes = createBrowserRouter([
     {
@@ -67,8 +64,24 @@ function App() {
         <Masterlayout IsLogin={isLogin} logOut={logOut} userdata={userData} />
       ),
       children: [
-        { index: true, element: <Home /> },
-        { path: "about", element: <About /> },
+        {
+          index: true,
+          element: (
+            <ProtectRoute isLogin={isLogin}>
+            
+              <Home />
+            </ProtectRoute>
+          ),
+        },
+        {
+          path: "about",
+          element: (
+            <ProtectRoute isLogin={isLogin}>
+            
+              <About />
+            </ProtectRoute>
+          ),
+        },
         {
           path: "movies",
           element: (
@@ -121,6 +134,6 @@ function App() {
       <RouterProvider router={routes} />
     </>
   );
-}
+};
 
 export default App;

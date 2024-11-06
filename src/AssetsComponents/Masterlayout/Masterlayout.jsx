@@ -7,7 +7,7 @@ export default function Masterlayout(props) {
   return (
     <>
       <Navbar IsLogin={props.IsLogin} logOut={props.logOut} userdata={props.userdata}/>
-      <div className="container-md my-3">
+      <div className={`container-md my-3 `} style={{ zIndex: 999999999999 }}>
         <Outlet></Outlet>
       </div>
       <Footer />

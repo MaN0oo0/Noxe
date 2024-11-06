@@ -2,7 +2,7 @@ import React from "react";
 
 export default function Profile(props) {
 
-  const { sub, roles, email } = props.userData;
+  const { sub, roles, email } = props.userData||{};
 
   return (
     <>

@@ -17,3 +17,10 @@ a,
 a:hover {
   color: $fontColor !important;
 }
+.bgStyle{
+  background-color: $bgColor;
+}
+.brdr{
+  border-bottom: $borderHeight solid $borderColor;
+  
+}

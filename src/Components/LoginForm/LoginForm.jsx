@@ -58,17 +58,21 @@ export default function LoginForm(props) {
         );
         if (res.status === 200) {
           localStorage.setItem("token", res.data.token);
-          localStorage.setItem("token", res.data.token);
           props.saveUserData();
-          // setIsLogin(true);
-
-           navigate("/");
+          navigate("/");
+          setResError({});
+          setError({})
+        }
+      } catch (error) {
+        let { response } = error;
+        if (response) {
+          setResError({ error: response.data });
+          return;
+        } else {
+          setResError({ error: error.message });
         }
 
-        setResError({});
-      } catch (error) {
-        console.error("Login failed:", error);
-        setResError(error.response);
+        console.log("Login failed:", error);
       }
     } else {
       setError(newErrors);
@@ -79,9 +83,7 @@ export default function LoginForm(props) {
       <div className="w-75 m-auto py-4">
         <h2>Login Form</h2>
         <ul>
-          {responseError && responseError.data && (
-            <li className="text-danger">{responseError.data}</li>
-          )}
+          {responseError.error && <li key={responseError.error} className="text-danger">{responseError.error}</li>}
         </ul>
         <form onSubmit={submitFormData}>
           {["email", "password"].map((field) => (
@@ -103,18 +105,17 @@ export default function LoginForm(props) {
               {errors && <p className="text-danger">{errors[field]}</p>}
             </div>
           ))}
-       
+
           <div className="d-flex justify-content-center">
-          <div className="w-100 d-flex justify-content-start">
-            <Link to={"/register"} className="text-decoration-none">
-              dont have account ? register
-            </Link>
+            <div className="w-100 d-flex justify-content-start">
+              <Link to={"/register"} className="text-decoration-none">
+                dont have account ? register
+              </Link>
+            </div>
+            <div className="w-100 d-flex justify-content-end">
+              <button className="btn btn-info">Login</button>
+            </div>
           </div>
-          <div className="w-100 d-flex justify-content-end">
-            <button className="btn btn-info">Login</button>
-          </div>
-          </div>
-       
         </form>
       </div>
     </>
