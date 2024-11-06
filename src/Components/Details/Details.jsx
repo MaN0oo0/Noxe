@@ -1,22 +1,20 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-export default function Details(props) {
+export default function Details() {
   const [movieDetail, setMovieDetail] = useState([]);
   const { id, type } = useParams();
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     let { data } = await axios.get(
       `https://api.themoviedb.org/3/${type}/${id}?language=en-US&api_key=c636ed7787cc302d96bf88ccf334e0d8`
     );
     setMovieDetail(data);
-
-    console.log(data);
-  };
+  }, [id, type]);
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [loadData]);
 
   return (
     <>
@@ -26,7 +24,7 @@ export default function Details(props) {
             <div className="col-md-4 mt-2">
               <img
                 src={`https://image.tmdb.org/t/p/original/${movieDetail.profile_path}`}
-       height="300px"
+                height="300px"
                 width="250px"
                 alt={`${movieDetail.name}`}
                 loading="lazy"

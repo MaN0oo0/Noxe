@@ -2,9 +2,7 @@ import "./App.css";
 import Masterlayout from "../../AssetsComponents/Masterlayout/Masterlayout";
 import {
   BrowserRouter,
-  createBrowserRouter,
   Route,
-  RouterProvider,
   Routes,
 } from "react-router-dom";
 import Home from "../Home/Home";
@@ -17,11 +15,11 @@ import LoginForm from "../LoginForm/LoginForm";
 import RegisterForm from "../RegisterForm/RegisterForm";
 import Tvshows from "../Tvshows/Tvshows";
 
-import { useContext, useEffect } from "react";
+
 import Profile from "../Profile/Profile";
 import ProtectRoute from "../ProtectRoute/ProtectRoute";
 import Details from "../Details/Details";
-import AuthContextProvider, { AuthContext } from "../../Context/Store";
+import AuthContextProvider from "../../Context/Store";
 
 const App = () => {
   // const [userData, setUserData] = useState(null);

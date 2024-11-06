@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import styles from "../RegisterForm/RegisterForm.module.scss";
-import { Link, Navigate, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { Link } from "react-router-dom";
+
 import { AuthContext } from "../../Context/Store";
 export default function LoginForm() {
   const { login } = useContext(AuthContext);
@@ -44,7 +44,7 @@ export default function LoginForm() {
     // }
     return "";
   };
-  let navigate = useNavigate();
+
   const submitFormData = async (e) => {
     e.preventDefault();
     const newErrors = {
@@ -55,8 +55,6 @@ export default function LoginForm() {
     if (Object.values(newErrors).every((error) => !error)) {
       try {
         login(user);
-        navigate('/')
-
         setResError({});
         setError({});
         
@@ -68,8 +66,6 @@ export default function LoginForm() {
         } else {
           setResError({ error: error.message });
         }
-
-  
       }
     } else {
       setError(newErrors);
