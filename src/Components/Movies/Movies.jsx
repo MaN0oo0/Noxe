@@ -1,29 +1,13 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useContext } from "react";
 
 import RenderMovies from "../../AssetsComponents/RenderMovies/RenderMovies";
+import { mediaContext } from "../../Context/MediaStore";
 export default function Movies() {
-  const [trendingMovies, setTrendingMovies] = useState([]);
-  let getTrendingMovies = async () => {
-    let { data } = await axios.get(
-      "https://api.themoviedb.org/3/trending/movie/day?api_key=c636ed7787cc302d96bf88ccf334e0d8"
-    );
-    setTrendingMovies(data.results);
-  };
-
-  //on component open
-  useEffect(() => {
-    getTrendingMovies();
-  }, []);
+  let { trendingMovies } = useContext(mediaContext);
 
   return (
     <>
-    
-    
-    <RenderMovies data={trendingMovies} title={'Movies'}/>
-
-
-
+      <RenderMovies data={trendingMovies} title={"Movies"} />
 
       {/* <div className="row">
         <div className="col-md-4">

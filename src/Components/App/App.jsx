@@ -19,7 +19,8 @@ import Tvshows from "../Tvshows/Tvshows";
 import Profile from "../Profile/Profile";
 import ProtectRoute from "../ProtectRoute/ProtectRoute";
 import Details from "../Details/Details";
-import AuthContextProvider from "../../Context/Store";
+import AuthContextProvider, { AuthContext } from "../../Context/Store";
+import { useContext } from "react";
 
 const App = () => {
   // const [userData, setUserData] = useState(null);
@@ -152,7 +153,7 @@ const App = () => {
               <Route
                 path="about"
                 element={
-                  <ProtectRoute>
+                  <ProtectRoute >
                     <About />
                   </ProtectRoute>
                 }
@@ -160,7 +161,7 @@ const App = () => {
               <Route
                 path="movies"
                 element={
-                  <ProtectRoute>
+                  <ProtectRoute >
                     <Movies />
                   </ProtectRoute>
                 }

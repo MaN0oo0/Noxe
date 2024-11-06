@@ -1,24 +1,26 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react'
+import React, { useContext } from "react";
 
-import RenderMovies from '../../AssetsComponents/RenderMovies/RenderMovies';
+import RenderMovies from "../../AssetsComponents/RenderMovies/RenderMovies";
+import { mediaContext } from "../../Context/MediaStore";
 export default function Tvshows() {
-  const [Tvshows, settVShows] = useState([]);
-  let gettVShows = async () => {
-    let { data } = await axios.get(
-      "https://api.themoviedb.org/3/trending/tv/day?api_key=c636ed7787cc302d96bf88ccf334e0d8"
-    );
-    settVShows(data.results);
-  };
+  let { Tvshows } = useContext(mediaContext);
+  console.log(Tvshows);
+  
+  // let gettVShows = async () => {
+  //   let { data } = await axios.get(
+  //     "https://api.themoviedb.org/3/trending/tv/day?api_key=c636ed7787cc302d96bf88ccf334e0d8"
+  //   );
+  //   settVShows(data.results);
+  // };
 
-  //on component open
-  useEffect(() => {
-    gettVShows();
-  }, []);
+  // //on component open
+  // useEffect(() => {
+  //   gettVShows();
+  // }, []);
   return (
     <>
-      <RenderMovies data={Tvshows} title={'Tv-shows'}/>
-    {/* <div className="row">
+      {Tvshows && <RenderMovies data={Tvshows} title={"Tv-shows"} />}
+      {/* <div className="row">
       <div className="col-md-4">
         <div className="welcome">
         <div className="brdr w-25 mb-3"> </div>
@@ -51,6 +53,6 @@ export default function Tvshows() {
         );
       })}
     </div> */}
-  </>
-  )
+    </>
+  );
 }
