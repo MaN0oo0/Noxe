@@ -18,7 +18,13 @@ export default function Movies() {
 
   return (
     <>
+    
+    
     <RenderMovies data={trendingMovies} title={'Movies'}/>
+
+
+
+
       {/* <div className="row">
         <div className="col-md-4">
           <div className="welcome">

@@ -1,11 +1,11 @@
 import "./App.css";
 import Masterlayout from "../../AssetsComponents/Masterlayout/Masterlayout";
 import {
+  BrowserRouter,
   createBrowserRouter,
+  Route,
   RouterProvider,
-  Navigate,
-  useLocation,
-  useNavigate,
+  Routes,
 } from "react-router-dom";
 import Home from "../Home/Home";
 import About from "../About/About";
@@ -16,122 +16,205 @@ import NotFound from "../NotFound/NotFound";
 import LoginForm from "../LoginForm/LoginForm";
 import RegisterForm from "../RegisterForm/RegisterForm";
 import Tvshows from "../Tvshows/Tvshows";
-import { jwtDecode } from "jwt-decode";
-import { useCallback, useEffect, useState } from "react";
+
+import { useContext, useEffect } from "react";
 import Profile from "../Profile/Profile";
 import ProtectRoute from "../ProtectRoute/ProtectRoute";
+import Details from "../Details/Details";
+import AuthContextProvider, { AuthContext } from "../../Context/Store";
 
 const App = () => {
-  const [userData, setUserData] = useState(null);
-  const [isLogin, setIsLogin] = useState(false);
+  // const [userData, setUserData] = useState(null);
 
-  const saveUserData = useCallback(() => {
-    return IsLogin(); // Call your login check function
-  }, []);
+  // const saveUserData = useCallback(() => {
+  //   return IsLogin(); // Call your login check function
+  // }, []);
 
-  const checkToken = (exp) => {
-    return Date.now() < exp * 1000;
-  };
+  // const checkToken = (exp) => {
+  //   return Date.now() < exp * 1000;
+  // };
 
-  const IsLogin = () => {
-    if (localStorage.getItem("token")) {
-      let decodedToken = jwtDecode(localStorage.getItem("token"));
-      setUserData(decodedToken);
-      if (checkToken(decodedToken.exp)) {
-        setIsLogin(true);
-      } else {
-        localStorage.removeItem("token");
-        setIsLogin(false);
-      }
-    }
-  };
-  const logOut = () => {
-    localStorage.removeItem("token");
-    setUserData(null);
-    setIsLogin(false);
-  };
-  //save data while refreshing :)
-  useEffect(() => {
-    if (localStorage.getItem("token")) {
-      saveUserData();
-    }
-  }, [saveUserData]);
+  // const IsLogin = () => {
+  //   if (localStorage.getItem("token")) {
+  //     let decodedToken = jwtDecode(localStorage.getItem("token"));
 
-  const routes = createBrowserRouter([
-    {
-      path: "/",
-      element: (
-        <Masterlayout IsLogin={isLogin} logOut={logOut} userdata={userData} />
-      ),
-      children: [
-        {
-          index: true,
-          element: (
-            <ProtectRoute isLogin={isLogin}>
-            
-              <Home />
-            </ProtectRoute>
-          ),
-        },
-        {
-          path: "about",
-          element: (
-            <ProtectRoute isLogin={isLogin}>
-            
-              <About />
-            </ProtectRoute>
-          ),
-        },
-        {
-          path: "movies",
-          element: (
-            <ProtectRoute isLogin={isLogin}>
-              <Movies />
-            </ProtectRoute>
-          ),
-        },
-        {
-          path: "people",
-          element: (
-            <ProtectRoute isLogin={isLogin}>
-              <People />
-            </ProtectRoute>
-          ),
-        },
-        {
-          path: "network",
-          element: (
-            <ProtectRoute isLogin={isLogin}>
-              <Network />
-            </ProtectRoute>
-          ),
-        },
-        {
-          path: "tvshows",
-          element: (
-            <ProtectRoute isLogin={isLogin}>
-              <Tvshows />{" "}
-            </ProtectRoute>
-          ),
-        },
-        {
-          path: "profile",
-          element: (
-            <ProtectRoute isLogin={isLogin}>
-              <Profile userData={userData} />
-            </ProtectRoute>
-          ),
-        },
-        { path: "login", element: <LoginForm saveUserData={saveUserData} /> },
-        { path: "register", element: <RegisterForm /> },
-      ],
-      errorElement: <NotFound />,
-    },
-  ]);
+  //     if (checkToken(decodedToken.exp)) {
+  //       setUserData(decodedToken);
+  //     } else {
+  //       localStorage.removeItem("token");
+  //     }
+  //   }
+  // };
+  // // const logOut = () => {
+  // //   localStorage.removeItem("token");
+  // //   setUserData(null);
+  // //   setIsLogin(false);
+  // // };
+  // //save data while refreshing :)
+  // useEffect(() => {
+  //   if (localStorage.getItem("token")) {
+  //     saveUserData();
+  //   }
+  // }, []);
+
+  // const routes = createBrowserRouter([
+  //   {
+  //     path: "/",
+  //     element: <Masterlayout userdata={userData} />,
+  //     children: [
+  //       {
+  //         path: "",
+  //         element: (
+  //           <ProtectRoute>
+  //             <Home />
+  //           </ProtectRoute>
+  //         ),
+  //       },
+  //       {
+  //         path: "about",
+  //         element: (
+  //           <ProtectRoute>
+  //             <About />
+  //           </ProtectRoute>
+  //         ),
+  //       },
+  //       {
+  //         path: "movies",
+  //         element: (
+  //           <ProtectRoute>
+  //             <Movies />
+  //           </ProtectRoute>
+  //         ),
+  //       },
+  //       {
+  //         path: "details/:type/:id",
+  //         element: (
+  //           <ProtectRoute>
+  //             <Details />
+  //           </ProtectRoute>
+  //         ),
+  //       },
+  //       {
+  //         path: "people",
+  //         element: (
+  //           <ProtectRoute>
+  //             <People />
+  //           </ProtectRoute>
+  //         ),
+  //       },
+  //       {
+  //         path: "network",
+  //         element: (
+  //           <ProtectRoute>
+  //             <Network />
+  //           </ProtectRoute>
+  //         ),
+  //       },
+  //       {
+  //         path: "tvshows",
+  //         element: (
+  //           <ProtectRoute>
+  //             <Tvshows />
+  //           </ProtectRoute>
+  //         ),
+  //       },
+  //       {
+  //         path: "profile",
+  //         element: (
+  //           <ProtectRoute>
+  //             <Profile userData={userData} />
+  //           </ProtectRoute>
+  //         ),
+  //       },
+  //       { path: "login", element: <LoginForm /> },
+  //       { path: "register", element: <RegisterForm /> },
+  //     ],
+  //     errorElement: <NotFound />,
+  //   },
+  // ]);
 
   return (
     <>
-      <RouterProvider router={routes} />
+      {/* <AuthContextProvider>
+          <RouterProvider router={routes} />
+        </AuthContextProvider> */}
+
+      <BrowserRouter>
+        <AuthContextProvider>
+          <Routes>
+            <Route path="/" element={<Masterlayout />}>
+              <Route
+                index={true}
+                element={
+                  <ProtectRoute>
+                    <Home />
+                  </ProtectRoute>
+                }
+              />
+              <Route
+                path="about"
+                element={
+                  <ProtectRoute>
+                    <About />
+                  </ProtectRoute>
+                }
+              />
+              <Route
+                path="movies"
+                element={
+                  <ProtectRoute>
+                    <Movies />
+                  </ProtectRoute>
+                }
+              />
+              <Route
+                path="details/:type/:id"
+                element={
+                  <ProtectRoute>
+                    <Details />
+                  </ProtectRoute>
+                }
+              />
+              <Route
+                path="people"
+                element={
+                  <ProtectRoute>
+                    <People />
+                  </ProtectRoute>
+                }
+              />
+              <Route
+                path="network"
+                element={
+                  <ProtectRoute>
+                    <Network />
+                  </ProtectRoute>
+                }
+              />
+              <Route
+                path="tvshows"
+                element={
+                  <ProtectRoute>
+                    <Tvshows />
+                  </ProtectRoute>
+                }
+              />
+              <Route
+                path="profile"
+                element={
+                  <ProtectRoute>
+                    <Profile />
+                  </ProtectRoute>
+                }
+              />
+              <Route path="login" element={<LoginForm />} />
+              <Route path="register" element={<RegisterForm />} />
+              {/* Add other routes here */}
+              <Route path="*" element={<NotFound />} /> {/* Catch-all route */}
+            </Route>
+          </Routes>
+        </AuthContextProvider>
+      </BrowserRouter>
     </>
   );
 };

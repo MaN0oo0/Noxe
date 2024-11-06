@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import styles from "../RegisterForm/RegisterForm.module.scss";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import axios from "axios";
-export default function LoginForm(props) {
+import { AuthContext } from "../../Context/Store";
+export default function LoginForm() {
+  const { login } = useContext(AuthContext);
   const [user, setUser] = useState({
     email: "",
     password: "",
@@ -52,17 +54,12 @@ export default function LoginForm(props) {
 
     if (Object.values(newErrors).every((error) => !error)) {
       try {
-        const res = await axios.post(
-          "https://localhost:7103/api/Auth/GetUserToken/token",
-          user
-        );
-        if (res.status === 200) {
-          localStorage.setItem("token", res.data.token);
-          props.saveUserData();
-          navigate("/");
-          setResError({});
-          setError({})
-        }
+        login(user);
+        navigate('/')
+
+        setResError({});
+        setError({});
+        
       } catch (error) {
         let { response } = error;
         if (response) {
@@ -72,7 +69,7 @@ export default function LoginForm(props) {
           setResError({ error: error.message });
         }
 
-        console.log("Login failed:", error);
+  
       }
     } else {
       setError(newErrors);
@@ -83,7 +80,11 @@ export default function LoginForm(props) {
       <div className="w-75 m-auto py-4">
         <h2>Login Form</h2>
         <ul>
-          {responseError.error && <li key={responseError.error} className="text-danger">{responseError.error}</li>}
+          {responseError.error && (
+            <li key={responseError.error} className="text-danger">
+              {responseError.error}
+            </li>
+          )}
         </ul>
         <form onSubmit={submitFormData}>
           {["email", "password"].map((field) => (
