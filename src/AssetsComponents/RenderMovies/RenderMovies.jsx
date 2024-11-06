@@ -2,6 +2,7 @@ import React from "react";
 import styles from "./Movies.module.scss";
 export default function RenderMovies(props) {
   const { data,title } = props;
+  let Range=Math.floor(Math.random() * (10 - 5 + 1) + 5);
   return (
     <>
       <div className="row">
@@ -15,22 +16,22 @@ export default function RenderMovies(props) {
             <div className="brdr"> </div>
           </div>
         </div>
-        {data.slice(0, 10).map((movie, index) => {
+        {data.slice(0, Range).map((movie, index) => {
           return (
-            <div key={index} className="col-md-2 ">
+            <div key={index} className={`col-md-2 ${movie.profile_path===null?'d-none':''}`}>
               <div className={`${styles.item}`}>
                 <img
-                  src={`https://image.tmdb.org/t/p/original/${movie.poster_path}`}
+                  src={`https://image.tmdb.org/t/p/original/${movie.poster_path||movie.profile_path}`}
                   height="200px"
                   width="150px"
-                  alt={`${movie.title}`}
+                  alt={`${movie.title||movie.name}`}
                   loading="lazy"
                 />
                 <div className=" w-auto bg-transparent mt-2">
-                  <h2 className="h6">{movie.title}</h2>
+                  <h2 className="h6">{movie.title||movie.name}</h2>
                 </div>
-                <span className={`${styles.vote_number}`}>
-                  {movie.vote_average.toFixed(1)}
+                <span className={`${styles.vote_number} ${!movie.vote_average?'d-none':''}`}>
+                  {movie.vote_average&&movie.vote_average.toFixed(1)}
                 </span>
               </div>
             </div>
